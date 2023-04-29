@@ -79,9 +79,9 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
             this.props.activate != prevProps.activate
         ) {
             if (this.props.activate) {
-                currentObserver.observe(root);
+                this._activate({observer: currentObserver, root});
             } else {
-                currentObserver.disconnect();
+                this._deactivate({observer: currentObserver});
             }
         }
     }
@@ -93,7 +93,7 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
             throw new Error("Observer should have been installed by the time the component is unmounted");
         }
 
-        observer.disconnect();
+        this._deactivate({observer});
     }
 
     render() {
@@ -120,9 +120,30 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
         });
 
         if (activate) {
-            observer.observe(root);
+            this._activate({observer, root});
         }
 
         return observer;
+    }
+
+    _activate(args: {
+        observer: BoundingClientRectObserver,
+        root: Element,
+    }) {
+        const {observer, root} = args;
+
+        observer.observe(root);
+
+        const initialBounds = root.getBoundingClientRect();
+
+        this.props.onBoundsChange(initialBounds);
+    }
+
+    _deactivate(args: {
+        observer: BoundingClientRectObserver,
+    }) {
+        const {observer} = args;
+
+        observer.disconnect();
     }
 }

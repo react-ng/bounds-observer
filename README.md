@@ -73,7 +73,7 @@ The React component for observing changes in the bounding client rect of its chi
 Properties:
 
 - `activate: boolean`: Whether the observer should be active
-- `onBoundsChange: (bounds: DOMRect) => void`: The callback function that will be invoked when the bounding client rect of the `BoundsObserver` component's child changes, but only when the observer is active
+- `onBoundsChange: (bounds: DOMRect) => void`: The callback function that will be invoked when the bounding client rect of the `BoundsObserver` component's child changes, but only when the observer is active. Additionally, this callback will be invoked on activation, i.e. when the `activate` property changes to `true` or the component is initialized with `activate` being `true`. 
 
 ## License
 

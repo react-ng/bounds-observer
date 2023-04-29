@@ -1,6 +1,6 @@
 {
   "name": "@react-ng/bounds-observer",
-  "version": "0.1.1",
+  "version": "0.1.3",
   "description": "A React component for observing element's bounds",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
