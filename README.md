@@ -24,39 +24,39 @@ const MyComponent = () => {
     };
 
     return (
-        <BoundsObserver activate={true} onBoundsChange={handleBoundsChange}>
+        <BoundsObserver enabled={true} onBoundsChange={handleBoundsChange}>
             <div id="my-element">Content</div>
         </BoundsObserver>
     );
 };
 ```
 
-### Conditional Activation
+### Conditional Enabling
 
-This example demonstrates how to activate and deactivate the `BoundsObserver` component using the `activate` prop.
+This example demonstrates how to enable and disable the `BoundsObserver` component using the `enabled` prop.
 
 ```tsx
 import React, { useState } from 'react';
 import { BoundsObserver } from '@react-ng/bounds-observer';
 
 const MyComponent = () => {
-    const [activate, setActivate] = useState(false);
+    const [enabled, setEnabled] = useState(false);
 
-    // This will be called only when the observer is active
+    // This will be called only when the observer is enabled
     const handleBoundsChange = (bounds: DOMRect) => {
         console.log('Bounds changed:', bounds);
     };
 
-    const toggleActivate = () => {
-        setActivate(!activate);
+    const toggleEnabled = () => {
+        setEnabled(!enabled);
     };
 
     return (
         <div>
-            <button onClick={toggleActivate}>
-                {activate ? 'Deactivate' : 'Activate'} observer
+            <button onClick={toggleEnabled}>
+                {enabled ? 'Disable' : 'Enable'} observer
             </button>
-            <BoundsObserver activate={activate} onBoundsChange={handleBoundsChange}>
+            <BoundsObserver enabled={enabled} onBoundsChange={handleBoundsChange}>
                 <div id="my-element">Content</div>
             </BoundsObserver>
         </div>
@@ -72,8 +72,8 @@ The React component for observing changes in the bounding client rect of its chi
 
 Properties:
 
-- `activate: boolean`: Whether the observer should be active
-- `onBoundsChange: (bounds: DOMRect) => void`: The callback function that will be invoked when the bounding client rect of the `BoundsObserver` component's child changes, but only when the observer is active. Additionally, this callback will be invoked on activation, i.e. when the `activate` property changes to `true` or the component is initialized with `activate` being `true`. 
+- `enabled: boolean`: Whether the observer should be enabled
+- `onBoundsChange: (bounds: DOMRect) => void`: The callback function that will be invoked when the bounding client rect of the `BoundsObserver` component's child changes, but only when the observer is enabled. Additionally, this callback will be invoked on enabling, i.e. when the `enabled` property changes to `true` or the component is initialized with `enabled` being `true`. 
 
 ## License
 

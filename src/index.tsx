@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import ReactDOM from 'react-dom';
 
 interface BoundsObserverProps {
-    readonly activate: boolean;
+    readonly enabled: boolean;
 
     readonly onBoundsChange: (bounds: DOMRect) => void;
 
@@ -41,7 +41,7 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
 
         this._observer = this._observe({
             root: childNode,
-            activate: this.props.activate,
+            activate: this.props.enabled,
         });
     }
 
@@ -76,7 +76,7 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
                 const newObserver = this._observe({
                     root: childNode,
                     // Ensure that the new observer is active, if the previous one was
-                    activate: prevProps.activate,
+                    activate: prevProps.enabled,
                 });
 
                 this._observer = newObserver;
@@ -90,9 +90,9 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
         const currentObserver = handleCallbackUpdate();
 
         if (
-            this.props.activate != prevProps.activate
+            this.props.enabled != prevProps.enabled
         ) {
-            if (this.props.activate) {
+            if (this.props.enabled) {
                 this._activate({observer: currentObserver, root: childNode});
             } else {
                 this._deactivate({observer: currentObserver});
