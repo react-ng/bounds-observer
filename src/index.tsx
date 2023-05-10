@@ -27,11 +27,13 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
     }
 
     componentDidMount() {
-        const childNode = ReactDOM.findDOMNode(this._childRef.current);
+        const childRef = this._childRef.current;
 
-        if (!childNode) {
+        if (!childRef) {
             throw new Error("Reference should have been set by the time the component is mounted");
         }
+
+        const childNode = ReactDOM.findDOMNode(childRef);
 
         if (!(childNode instanceof Element)) {
             throw new Error("Child's corresponding DOM node should be an Element");
