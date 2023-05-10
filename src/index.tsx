@@ -1,32 +1,46 @@
-import React, {ReactNode} from "react";
+import React, {ReactInstance, RefObject} from "react";
 import {BoundingClientRectObserver} from "@html-ng/bounding-client-rect-observer";
+import PropTypes from "prop-types";
+import ReactDOM from 'react-dom';
 
 interface BoundsObserverProps {
     readonly activate: boolean;
 
     readonly onBoundsChange: (bounds: DOMRect) => void;
 
-    readonly children: ReactNode;
+    readonly children: React.ReactElement;
 }
 
 export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
-    private _observer: BoundingClientRectObserver | null = null;
+    static propTypes = {
+        children: PropTypes.element.isRequired,
+    };
 
-    private _root = React.createRef<HTMLDivElement>()
+    private _childRef = React.createRef<ReactInstance>();
+
+    private _childNode: Element | null = null;
+
+    private _observer: BoundingClientRectObserver | null = null;
 
     constructor(props: BoundsObserverProps) {
         super(props);
     }
 
     componentDidMount() {
-        const root = this._root.current;
+        const childNode = ReactDOM.findDOMNode(this._childRef.current);
 
-        if (!root) {
+        if (!childNode) {
             throw new Error("Reference should have been set by the time the component is mounted");
         }
 
+        if (!(childNode instanceof Element)) {
+            throw new Error("Child's corresponding DOM node should be an Element");
+        }
+
+        this._childNode = childNode;
+
         this._observer = this._observe({
-            root,
+            root: childNode,
             activate: this.props.activate,
         });
     }
@@ -42,9 +56,9 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
             throw new Error(`Observer should have been installed by the time the component is updated`);
         }
 
-        const root = this._root.current;
+        const childNode = this._childNode;
 
-        if (!root) {
+        if (!childNode) {
             throw new Error("Reference should have been set by the time the component is updated");
         }
 
@@ -60,7 +74,7 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
                 oldObserver.disconnect();
 
                 const newObserver = this._observe({
-                    root,
+                    root: childNode,
                     // Ensure that the new observer is active, if the previous one was
                     activate: prevProps.activate,
                 });
@@ -79,7 +93,7 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
             this.props.activate != prevProps.activate
         ) {
             if (this.props.activate) {
-                this._activate({observer: currentObserver, root});
+                this._activate({observer: currentObserver, root: childNode});
             } else {
                 this._deactivate({observer: currentObserver});
             }
@@ -97,11 +111,14 @@ export class BoundsObserver extends React.Component<BoundsObserverProps, {}> {
     }
 
     render() {
-        return (
-            <div ref={this._root}>
-                {this.props.children}
-            </div>
-        )
+        const child = React.Children.only(this.props.children);
+
+        return React.cloneElement(
+            child,
+            {
+                ref: this._childRef
+            },
+        );
     }
 
     _observe(args: {
